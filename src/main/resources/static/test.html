@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WorkChat - Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #login, #chat {
+            margin-bottom: 20px;
+        }
+        #chat {
+            display: none;
+        }
+        #messages {
+            border: 1px solid #ccc;
+            height: 300px;
+            overflow-y: scroll;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        #users {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>WorkChat - Test Page</h1>
+
+<div id="login">
+    <h2>Login</h2>
+    <input type="text" id="username" placeholder="Enter your username" required>
+    <button id="loginBtn">Login</button>
+</div>
+
+<div id="chat">
+    <h2>Chat</h2>
+    <div id="users">
+        <label for="recipient">Send to:</label>
+        <input type="text" id="recipient" placeholder="Recipient username">
+    </div>
+    <div id="messages"></div>
+    <input type="text" id="messageInput" placeholder="Enter your message">
+    <button id="sendBtn">Send</button>
+</div>
+
+<script>
+    let ws;
+    let username = '';
+
+    document.getElementById('loginBtn').addEventListener('click', () => {
+        username = document.getElementById('username').value.trim();
+        if (username === '') {
+            alert('Please enter a username.');
+            return;
+        }
+        connectWebSocket();
+    });
+
+    document.getElementById('sendBtn').addEventListener('click', () => {
+        const recipient = document.getElementById('recipient').value.trim();
+        const message = document.getElementById('messageInput').value.trim();
+        if (recipient === '' || message === '') {
+            alert('Please enter both recipient and message.');
+            return;
+        }
+        sendMessage(recipient, message);
+        appendMessage(`You to ${recipient}: ${message}`);
+        document.getElementById('messageInput').value = '';
+    });
+
+    function connectWebSocket() {
+        // Connect to the WebSocket endpoint
+        ws = new WebSocket(`ws://${window.location.host}/chat`);
+
+        ws.onopen = () => {
+            console.log('WebSocket connection opened.');
+            // Send a message to register the username
+            ws.send(JSON.stringify({ type: 'LOGIN', username: username }));
+            document.getElementById('login').style.display = 'none';
+            document.getElementById('chat').style.display = 'block';
+        };
+
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.type === 'MESSAGE') {
+                appendMessage(`${data.sender} to you: ${data.content}`);
+            }
+        };
+
+        ws.onclose = () => {
+            console.log('WebSocket connection closed.');
+            alert('WebSocket connection closed.');
+            document.getElementById('login').style.display = 'block';
+            document.getElementById('chat').style.display = 'none';
+        };
+
+        ws.onerror = (error) => {
+            console.error('WebSocket error:', error);
+            alert('WebSocket error occurred.');
+        };
+    }
+
+    function sendMessage(recipient, message) {
+        const msg = {
+            type: 'MESSAGE',
+            recipient: recipient,
+            content: message,
+            sender: username
+        };
+        ws.send(JSON.stringify(msg));
+    }
+
+    function appendMessage(message) {
+        const messagesDiv = document.getElementById('messages');
+        const messageElement = document.createElement('div');
+        messageElement.textContent = message;
+        messagesDiv.appendChild(messageElement);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+</script>
+
+</body>
+</html>
