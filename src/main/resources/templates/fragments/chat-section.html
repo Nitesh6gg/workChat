@@ -8,23 +8,17 @@
 <body>
 
 <!-- chat component -->>
-<div th:fragment="chat-section">
-
-
+<div id="chat-section" th:fragment="chat-section">
 
         <div class="flex flex-row items-center bg-white py-4 px-6 rounded-2xl shadow">
 
             <div class="flex items-center justify-center h-10 w-10 rounded-full text-pink-100">
                 <!-- condition on img -->
-                <ng-container
-                        *ngIf="!selectedUser.profilePicture || selectedUser.profilePicture.length === 0; else showProfilePicture">
                     <img class="object-cover w-10 h-10 rounded-full" src="assets/default.webp" alt="not found">
-                </ng-container>
-
             </div>
 
             <div class="flex flex-col ml-3">
-                <div class="font-semibold text-sm">users </div>
+                <div id="selectedUserDisplay" class="font-semibold text-sm"> </div>
                 <div class="text-xs text-gray-500">Active</div>
             </div>
             <div class="ml-auto">
@@ -175,7 +169,7 @@
                     </svg>
                 </button>
                 <div class="w-full">
-                    <input type="text" class="border border-transparent w-full focus:outline-none text-sm h-10 flex items-center"
+                    <input type="text" id="messageInput" class="border border-transparent w-full focus:outline-none text-sm h-10 flex items-center"
                            placeholder="Type your message....">
                 </div>
                 <div class="flex flex-row">
@@ -198,7 +192,7 @@
                 </div>
             </div>
             <div class="ml-6">
-                <button
+                <button id="sendBtn"
                         class="flex items-center justify-center h-10 w-10 rounded-full bg-cyan-300 hover:bg-cyan-500 text-indigo-800 text-white">
                     <svg class="w-5 h-5 transform rotate-90 -mr-px" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                          xmlns="http://www.w3.org/2000/svg">

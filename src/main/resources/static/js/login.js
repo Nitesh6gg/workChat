@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem('userEmail', email);
 
             // Redirect to the message.html page
-            window.location.href = '/message';
+            window.location.href = '/index';
         });
     }
 });

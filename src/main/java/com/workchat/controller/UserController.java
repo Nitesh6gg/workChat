@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
@@ -16,20 +17,20 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/index")
+    @GetMapping(value = {"/", "/login"})
     public String index() {
-        return "index";
+        return "login";
     }
 
-    @GetMapping("/message")
+    @GetMapping("/index")
     public String getAllActiveUsers(Model model) {
         List<Map<String,Object>> activeUsers = userService.getAllActiveUsers();
         model.addAttribute("activeUsers",activeUsers);
-        return "message";
+        return "index";
     }
 
-    @GetMapping("/chats/{id}")
-    public String chatPage(@PathVariable String id, Model model) {
+    @GetMapping("/chats")
+    public String chatPage(@RequestParam String id, Model model) {
         model.addAttribute("userId", id);
         return "chat";
     }
