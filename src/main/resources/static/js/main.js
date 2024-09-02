@@ -23,10 +23,12 @@ function connectWebSocket() {
         };
 
         ws.onmessage = (event) => {
-            const data = JSON.parse(event.data);
+           /* const data = JSON.parse(event.data);
             if (data.type === 'MESSAGE') {
                 appendMessage(`${data.sender} to you: ${data.content}`);
-            }
+            }*/
+            const messageData = JSON.parse(event.data);
+                appendMessage(messageData);
         };
 
         ws.onclose = () => {
@@ -41,42 +43,6 @@ function connectWebSocket() {
             alert('WebSocket error occurred.');
         };
 }
-/*
-function loadChat(username) {
- console.log('Loading chat for user:', username);
-
-
-
-//selectedUser = document.getElementById('selectedUser');
-    selectedUser = username; // Set the selected user
-//    document.getElementById('login').style.display = 'none';
-//    document.getElementById('chat').style.display = 'block';
-// Assuming 'item' is defined and has a 'username' property
-
-
-console.log("Selected user is", selectedUser);
-// Update chat section with selected user's details
-    const chatHeaderUsername = document.getElementById('chat-header-username');
-    if (chatHeaderUsername) {
-        chatHeaderUsername.textContent = selectedUser;
-    }
-
-    // Update chat section with selected user's details
-    //document.getElementById('chat-header-username')?.textContent = username;
-    // You can also set other user-specific data here if needed
-
-    // If WebSocket is already open, send a message to join the chat with the selected user
-    if (ws && ws.readyState === WebSocket.OPEN) {
-    console.log("selected user is ",selectedUser);
-    }
-        //ws.send(JSON.stringify({ type: 'JOIN', username: selectedUser }));
-    else {
-        // Reconnect WebSocket if it's not open
-        connectWebSocket();
-    }
-}*/
-
-// chat.js
 
 function loadChat(element) {
     selectedUser = element.getAttribute('data-selectedUser');
@@ -99,7 +65,7 @@ document.getElementById('sendBtn').addEventListener('click', () => {
 const message = document.getElementById('messageInput').value.trim();
        console.log('send button')
         sendMessage(selectedUser, message);
-        appendMessage(`You to ${recipient}: ${message}`);
+        appendMessage(`You to ${selectedUser}: ${message}`);
         document.getElementById('messageInput').value = '';
     });
 
@@ -123,6 +89,19 @@ function appendMessage(message) {
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
 
+function appendMessage(messageData) {
+    const chatContainer = document.getElementById('chat-container');
+    if (chatContainer) {  // Check if chatContainer is not null
+        const newMessageElement = document.createElement('div');
+        newMessageElement.className = 'chat-message';
+        newMessageElement.innerHTML = `
+            <strong>${messageData.sender}</strong>: ${messageData.message}
+        `;
+        chatContainer.appendChild(newMessageElement);
+    } else {
+        console.error("Chat container not found!");
+    }
+}
 
 
 
