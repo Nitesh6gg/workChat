@@ -22,8 +22,4 @@ public class ChatController {
         messageService.sendMessageToUser(username, message,sender);
     }
 
-    @GetMapping("/users")
-    public List<Map<String,Object>> getAllActiveUsers() {
-        return messageService.getAllActiveUsers();
-    }
 }
