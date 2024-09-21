@@ -18,6 +18,14 @@ public class WebSocketSessionManager {
         sessions.put(username, session);
     }
 
+    public void removeSession(String username) {
+        sessions.remove(username);
+    }
+
+    public WebSocketSession getSession(String username) {
+        return sessions.get(username);
+    }
+
     public List<Map<String, Object>> getAllActiveSessions() {
         return sessions.entrySet().stream()
                 .map(entry -> {
@@ -29,12 +37,6 @@ public class WebSocketSessionManager {
                 .collect(Collectors.toList());
     }
 
-    public void removeSession(String username) {
-        sessions.remove(username);
-    }
 
-    public WebSocketSession getSession(String username) {
-        return sessions.get(username);
-    }
 }
 

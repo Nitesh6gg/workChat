@@ -2,7 +2,10 @@ package com.workchat.config;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.workchat.entity.Message;
+import com.workchat.repository.MessageRepository;
 import com.workchat.service.MessageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -11,6 +14,8 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static com.fasterxml.jackson.databind.jsonFormatVisitors.JsonValueFormat.UUID;
 
 @Component
 public class ChatWebSocketHandler extends TextWebSocketHandler {
@@ -42,6 +47,9 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     private final MessageService messageService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    @Autowired
+    private MessageRepository messageRepo;
+
     public ChatWebSocketHandler(WebSocketSessionManager sessionManager, MessageService messageService) {
         this.sessionManager = sessionManager;
         this.messageService = messageService;
@@ -51,6 +59,15 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         // Do not register the session yet. Wait for LOGIN message
         logger.info("New WebSocket connection established.");
+    }
+
+    @Override
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+        String username = (String) session.getAttributes().get("username");
+        if (username != null) {
+            sessionManager.removeSession(username);
+            logger.info("User disconnected: " + username);
+        }
     }
 
     @Override
@@ -69,23 +86,32 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
                 String content = jsonNode.get("content").asText();
                 String sender = jsonNode.get("sender").asText();
 
+                Message  ms= new Message();
+
+                ms.setSenderId(sender);
+                ms.setRecipientId(recipient);
+                ms.setMessage(content);
+
                 // Save message to database if needed
                 // Optionally, you can implement saving logic here
 
                 // Send message to recipient
                 messageService.sendMessageToUser(recipient, content, sender);
+
+                try{
+                    messageRepo.save(ms);
+                    System.out.println("Message saved");
+
+                }catch (Exception e){
+                    logger.log(Level.SEVERE, "Error sending message to user: " + recipient, e);
+                    session.close();
+                    return;
+                }
             }
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Error parsing message: " + message.getPayload(), e);
         }
     }
 
-    @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        String username = (String) session.getAttributes().get("username");
-        if (username != null) {
-            sessionManager.removeSession(username);
-            logger.info("User disconnected: " + username);
-        }
-    }
+
 }

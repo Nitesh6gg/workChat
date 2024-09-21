@@ -5,6 +5,7 @@ import com.workchat.dto.request.UserDto;
 import com.workchat.entity.User;
 import com.workchat.globalResponse.MessageResponse;
 import com.workchat.repository.UserRepository;
+import com.workchat.service.CustomPasswordEncoder;
 import com.workchat.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private WebSocketSessionManager sessionManager;
+
+    @Autowired
+    private CustomPasswordEncoder passwordEncoder;
 
     @Override
     public List<Map<String, Object>> getAllActiveUsers() {
@@ -47,7 +51,7 @@ public class UserServiceImpl implements UserService {
             user.setUsername(dto.username());
             user.setFullName(dto.fullName());
             user.setEmail(dto.email());
-            user.setPassword(dto.password());
+            user.setPassword(passwordEncoder.encode(dto.password()));
             userRepo.save(user);
             return new MessageResponse("user saved successfully", HttpStatus.CREATED);
 
