@@ -51,6 +51,7 @@ public class UserServiceImpl implements UserService {
             user.setUsername(dto.username());
             user.setFullName(dto.fullName());
             user.setEmail(dto.email());
+            user.setActive(true);
             user.setPassword(passwordEncoder.encode(dto.password()));
             userRepo.save(user);
             return new MessageResponse("user saved successfully", HttpStatus.CREATED);

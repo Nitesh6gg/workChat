@@ -1,4 +1,4 @@
 package com.workchat.dto.request;
 
-public record LoginDto(String username, String password) {
+public record LoginDto(String email, String password) {
 }

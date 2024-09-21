@@ -2,7 +2,7 @@ package com.workchat.serviceImpl;
 
 import com.workchat.dto.request.LoginDto;
 import com.workchat.entity.User;
-import com.workchat.globalResponse.MessageResponse;
+import com.workchat.globalResponse.LoginResponse;
 import com.workchat.repository.UserRepository;
 import com.workchat.service.AuthService;
 import com.workchat.service.CustomPasswordEncoder;
@@ -19,21 +19,21 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private UserRepository userRepo;
     @Override
-    public MessageResponse authenticate(LoginDto dto) {
+    public LoginResponse authenticate(LoginDto dto) {
         try{
-            Optional<User> byUsername = userRepo.findByUsername(dto.username());
-            if(byUsername.isPresent()){
-                User user = byUsername.get();
+            Optional<User> byEmail = userRepo.findByEmail(dto.email());
+            if(byEmail.isPresent()){
+                User user = byEmail.get();
                 if(passwordEncoder.matches(dto.password(), user.getPassword())){
-                    return new MessageResponse("Login Successful", HttpStatus.OK);
+                    return new LoginResponse("Login Successful", HttpStatus.OK,user);
                 }else{
-                    return new MessageResponse("Invalid Credentials",HttpStatus.BAD_REQUEST);
+                    return new LoginResponse("Invalid Credentials",HttpStatus.BAD_REQUEST,null);
                 }
             }else{
-                return new MessageResponse("Username Not Found", HttpStatus.NOT_FOUND);
+                return new LoginResponse("Email Not Found", HttpStatus.NOT_FOUND,null);
             }
         }catch(Exception e){
-            return new MessageResponse("Something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new LoginResponse("Something went wrong", HttpStatus.INTERNAL_SERVER_ERROR,null);
         }
     }
 

@@ -28,6 +28,7 @@ public class User {
     @JsonIgnore
     private String password;
     private String status;
+    private boolean isActive;
     private LocalDateTime createdON= LocalDateTime.now();
 
 }

@@ -1,10 +1,10 @@
 package com.workchat.service;
 
 import com.workchat.dto.request.LoginDto;
-import com.workchat.globalResponse.MessageResponse;
+import com.workchat.globalResponse.LoginResponse;
 
 public interface AuthService {
 
-    MessageResponse authenticate(LoginDto dto);
+    LoginResponse authenticate(LoginDto dto);
 
 }
