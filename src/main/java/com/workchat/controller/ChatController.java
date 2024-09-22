@@ -1,7 +1,9 @@
 package com.workchat.controller;
 
+import com.workchat.entity.Message;
 import com.workchat.service.MessageService;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +22,11 @@ public class ChatController {
     @PostMapping("/sendToUser")
     public void sendToUser(@RequestParam String username, @RequestParam String message,@RequestParam String sender) {
         messageService.sendMessageToUser(username, message,sender);
+    }
+
+    @GetMapping()
+    ResponseEntity<List<Message>> getMessages(@RequestParam String senderId, @RequestParam String recipientId) {
+        return ResponseEntity.ok(messageService.findChatHistory(senderId, recipientId));
     }
 
 }

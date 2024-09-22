@@ -11,7 +11,7 @@ public interface UserService {
 
     List<Map<String,Object>> getAllActiveUsers();
 
-    List<User> getAllUsers();
+    List<User> getAllUsers(String userId);
 
     MessageResponse  saveUser(UserDto dto);
 }

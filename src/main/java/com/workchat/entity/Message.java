@@ -1,9 +1,9 @@
 package com.workchat.entity;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -15,8 +15,10 @@ public class Message {
     private String senderId;
     private String recipientId;
     private String roomId;
-    private String message;
+    @NotBlank
+    private String content;
     private Boolean isRead=false;
-    private LocalDateTime createdAt=LocalDateTime.now();
+    private String datestamp;
+    private String timestamp;
 
 }

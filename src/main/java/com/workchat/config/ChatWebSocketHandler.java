@@ -3,7 +3,9 @@ package com.workchat.config;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workchat.entity.Message;
+import com.workchat.entity.User;
 import com.workchat.repository.MessageRepository;
+import com.workchat.repository.UserRepository;
 import com.workchat.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,6 +14,9 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -49,11 +54,19 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     @Autowired
     private MessageRepository messageRepo;
+    @Autowired
+    private UserRepository userRepository;
 
     public ChatWebSocketHandler(WebSocketSessionManager sessionManager, MessageService messageService) {
         this.sessionManager = sessionManager;
         this.messageService = messageService;
     }
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    String formattedDate = LocalDateTime.now().format(formatter);
+
+    DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("hh:mm:ss a");
+    String formattedTime = LocalDateTime.now().format(formatter1);
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -66,6 +79,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         String username = (String) session.getAttributes().get("username");
         if (username != null) {
             sessionManager.removeSession(username);
+            setUserOnlineStatus(false, username);
             logger.info("User disconnected: " + username);
         }
     }
@@ -80,17 +94,21 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
                 String username = jsonNode.get("username").asText();
                 sessionManager.addSession(username, session);
                 session.getAttributes().put("username", username);
+                setUserOnlineStatus(true,username);
+
                 logger.info("User logged in: " + username);
             } else if ("MESSAGE".equals(type)) {
                 String recipient = jsonNode.get("recipient").asText();
                 String content = jsonNode.get("content").asText();
                 String sender = jsonNode.get("sender").asText();
 
-                Message  ms= new Message();
-
+                Message ms= new Message();
                 ms.setSenderId(sender);
                 ms.setRecipientId(recipient);
-                ms.setMessage(content);
+                ms.setContent(content);
+                ms.setDatestamp(formattedDate);
+                ms.setTimestamp(formattedTime);
+
 
                 // Save message to database if needed
                 // Optionally, you can implement saving logic here
@@ -100,8 +118,6 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
                 try{
                     messageRepo.save(ms);
-                    System.out.println("Message saved");
-
                 }catch (Exception e){
                     logger.log(Level.SEVERE, "Error sending message to user: " + recipient, e);
                     session.close();
@@ -110,6 +126,15 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             }
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Error parsing message: " + message.getPayload(), e);
+        }
+    }
+
+    private void setUserOnlineStatus(boolean isOnline,String userId) {
+        Optional<User> byUsername = userRepository.findByUsername(userId);
+        if (byUsername.isPresent()) {
+            User user = byUsername.get();
+            user.setOnline(isOnline);
+            userRepository.save(user); // Update user online status in database
         }
     }
 

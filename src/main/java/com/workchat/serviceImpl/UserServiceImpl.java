@@ -10,6 +10,9 @@ import com.workchat.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,8 +36,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAllUsers() {
-        return userRepo.findAll();
+    public List<User> getAllUsers(String userId) {
+        return userRepo.findAllUsersExcept(userId);
     }
 
     @Override

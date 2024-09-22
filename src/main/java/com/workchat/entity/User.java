@@ -27,8 +27,8 @@ public class User {
     @NotBlank(message = "password is required")
     @JsonIgnore
     private String password;
-    private String status;
-    private boolean isActive;
-    private LocalDateTime createdON= LocalDateTime.now();
+    private boolean online;
+    private boolean active;
+    private LocalDateTime timeStamp=LocalDateTime.now();
 
 }
