@@ -62,11 +62,15 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         this.messageService = messageService;
     }
 
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    String formattedDate = LocalDateTime.now().format(formatter);
+    // Current date and time
+    LocalDateTime now = LocalDateTime.now();
 
-    DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("hh:mm:ss a");
-    String formattedTime = LocalDateTime.now().format(formatter1);
+    // Define the formatter to remove nanoseconds
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+
+    // Format the LocalDateTime
+    String formattedDateTime = now.format(formatter);
+
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -106,9 +110,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
                 ms.setSenderId(sender);
                 ms.setRecipientId(recipient);
                 ms.setContent(content);
-                ms.setDatestamp(formattedDate);
-                ms.setTimestamp(formattedTime);
-
+                ms.setTimestamp(formattedDateTime);
 
                 // Save message to database if needed
                 // Optionally, you can implement saving logic here

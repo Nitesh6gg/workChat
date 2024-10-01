@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -18,7 +17,6 @@ public class Message {
     @NotBlank
     private String content;
     private Boolean isRead=false;
-    private String datestamp;
     private String timestamp;
 
 }
