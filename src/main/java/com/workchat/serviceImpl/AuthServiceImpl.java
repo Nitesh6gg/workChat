@@ -6,18 +6,17 @@ import com.workchat.globalResponse.LoginResponse;
 import com.workchat.repository.UserRepository;
 import com.workchat.service.AuthService;
 import com.workchat.service.CustomPasswordEncoder;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
+@RequiredArgsConstructor
 @Service
 public class AuthServiceImpl implements AuthService {
 
-    @Autowired
-    private CustomPasswordEncoder passwordEncoder;
+    private final CustomPasswordEncoder passwordEncoder;
+    private final UserRepository userRepo;
 
-    @Autowired
-    private UserRepository userRepo;
     @Override
     public LoginResponse authenticate(LoginDto dto) {
         try{

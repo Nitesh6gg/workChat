@@ -2,7 +2,6 @@ package com.workchat.controller;
 
 import com.workchat.dto.request.LoginDto;
 import com.workchat.globalResponse.LoginResponse;
-import com.workchat.globalResponse.MessageResponse;
 import com.workchat.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;

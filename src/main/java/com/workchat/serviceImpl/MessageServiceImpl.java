@@ -4,8 +4,8 @@ import com.workchat.config.WebSocketSessionManager;
 import com.workchat.entity.Message;
 import com.workchat.repository.MessageRepository;
 import com.workchat.service.MessageService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -15,18 +15,11 @@ import java.util.Map;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class MessageServiceImpl implements MessageService {
 
     private final MessageRepository messageRepository;
-
     private final WebSocketSessionManager sessionManager;
-
-    @Autowired
-    public MessageServiceImpl(WebSocketSessionManager sessionManager,
-                              MessageRepository messageRepository) {
-        this.sessionManager = sessionManager;
-        this.messageRepository = messageRepository;
-    }
 
     @Override
     public void sendMessageToUser(String username, String message, String sender) {
@@ -53,4 +46,5 @@ public class MessageServiceImpl implements MessageService {
     public List<Message> findChatHistory(String senderId, String recipientId) {
         return messageRepository.findChatHistory(senderId, recipientId);
     }
+
 }

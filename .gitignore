@@ -84,3 +84,22 @@ ehthumbs.db
 
 # Maven
 target/
+
+# Compiled output
+ui/dist
+ui/tmp
+ui/out-tsc
+ui/bazel-out
+
+# Node
+npm-debug.log
+yarn-error.log
+
+# Angular
+ui/dist/
+ui/node_modules
+ui/tmp/
+ui/out-tsc/
+ui/.angular/
+ui/bazel-out/
+

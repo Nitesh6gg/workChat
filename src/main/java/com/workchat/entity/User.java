@@ -30,5 +30,4 @@ public class User {
     private boolean online;
     private boolean active;
     private LocalDateTime timeStamp=LocalDateTime.now();
-
 }

@@ -20,8 +20,6 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.fasterxml.jackson.databind.jsonFormatVisitors.JsonValueFormat.UUID;
-
 @Component
 public class ChatWebSocketHandler extends TextWebSocketHandler {
 
