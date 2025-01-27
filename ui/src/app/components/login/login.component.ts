@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink, RouterModule, Router } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { ApiService } from '../../services/apiService/api.service';
 
 @Component({
@@ -28,7 +28,7 @@ export class LoginComponent {
         next: (response: any) => {
           if (response.httpStatus === 'OK') {
             const user = response.user;
-            
+
             // Store user details in local storage
             localStorage.setItem('userId', user.id);
             localStorage.setItem('username', user.username);
